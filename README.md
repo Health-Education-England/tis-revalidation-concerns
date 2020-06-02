@@ -1,4 +1,4 @@
-# TIS Microservice Template
+# TIS Revalidation Concerns Microservice
 
 ## About
 This is a template to be used for TIS microservices with the following
@@ -6,7 +6,7 @@ technology:
 
  - Java 11
  - Spring Boot
- - Gradle
+ - Gradle/Maven
  - JUnit 5
 
 Boilerplate code is to be generated with:
