@@ -19,25 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.nhs.hee.tis.template.config;
+package uk.nhs.hee.tis.revalidation.concerns;
 
-import io.sentry.spring.SentryExceptionResolver;
-import io.sentry.spring.SentryServletContextInitializer;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Configuration
-public class SentryConfiguration {
+@SpringBootTest
+class ConcernsApplicationTest {
 
-  @Bean
-  public HandlerExceptionResolver sentryExceptionResolver() {
-    return new SentryExceptionResolver();
-  }
+  @Test
+  void contextLoads() {
 
-  @Bean
-  public ServletContextInitializer sentryServletContextInitilizer() {
-    return new SentryServletContextInitializer();
   }
 }
