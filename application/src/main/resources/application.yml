@@ -1,11 +1,11 @@
-#server:
- #port: 8087
-  #servlet:
-    #context-path: /concerns
-
 debug: true
 spring:
   profiles:
     active: ${SPRING_PROFILE:local}
   application:
-    name: TIS-HEE-REVALIDATION
+    name: TIS-REVALIDAITON-CONCERNS
+
+server:
+  servlet:
+    context-path: /revalidation
+  port: ${SERVICE_PORT:8087}
