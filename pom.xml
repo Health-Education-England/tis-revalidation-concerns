@@ -93,12 +93,6 @@
         <version>${springfox-swagger.version}</version>
       </dependency>
 
-      <!--<dependency>
-        <groupId>uk.nhs.hee.tis</groupId>
-        <artifactId>gmc-api</artifactId>
-        <version>${gmc-api.version}</version>
-      </dependency>-->
-
       <dependency>
         <groupId>org.glassfish.jaxb</groupId>
         <artifactId>jaxb-runtime</artifactId>

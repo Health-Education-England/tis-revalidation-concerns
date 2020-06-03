@@ -3,9 +3,9 @@ spring:
   profiles:
     active: ${SPRING_PROFILE:local}
   application:
-    name: TIS-REVALIDAITON-CONCERNS
+    name: tis-revalidation-concerns
 
 server:
   servlet:
-    context-path: /revalidation
+    context-path: /concerns
   port: ${SERVICE_PORT:8087}
