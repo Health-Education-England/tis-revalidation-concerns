@@ -21,14 +21,13 @@
 
 package uk.nhs.hee.tis.revalidation.concerns;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ConcernsApplicationTest {
+public class ConcernsApplicationTest {
 
   @Test
-  void contextLoads() {
-
+  public void contextLoads() {
   }
 }
