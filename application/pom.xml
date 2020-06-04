@@ -54,11 +54,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.javafaker</groupId>
-      <artifactId>javafaker</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>io.sentry</groupId>
       <artifactId>sentry-spring</artifactId>
     </dependency>
@@ -66,16 +61,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
     </dependency>
 
   </dependencies>
