@@ -22,7 +22,7 @@
 
   <properties>
     <java.version>11</java.version>
-    <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
+    <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
     <lombok.version>1.18.12</lombok.version>
     <springfox-swagger.version>2.9.2</springfox-swagger.version>
     <sentry.version>1.7.30</sentry.version>
