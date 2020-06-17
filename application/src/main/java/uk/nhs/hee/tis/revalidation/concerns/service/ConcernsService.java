@@ -6,14 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
-
-import java.util.stream.Collectors;
+import uk.nhs.hee.tis.revalidation.concerns.repository.ConcernsForDBRepository;
 
 import static java.time.LocalDate.now;
+import static java.util.stream.Collectors.*;
 
 @Transactional
 @Service
 public class ConcernsService {
+
+  @Autowired
+  private ConcernsForDBRepository concernsRepository;
 
   @Autowired
   private RevalidationService revalidationService;
@@ -36,25 +39,15 @@ public class ConcernsService {
           .type("concern")
           .concernsStatus("Open")
           .source("source")
-          .dateAdded(now())
+          .dateAdded(trainee.getDateAdded())
           .build();
-    }).collect(Collectors.toList());
+    }).collect(toList());
 
     return ConcernsSummaryDto.builder()
         .countTotal(traineeInfo.getCountTotal())
+        .totalPages(traineeInfo.getTotalPages())
+        .totalResults(traineeInfo.getTotalResults())
         .concernTrainees(concernTrainees)
         .build();
   }
-
-//  private Page<ConcernsForDB> getSortedConcernsByPageNumber(final ConcernsRequestDto requestDto) {
-//    final var direction = "asc".equalsIgnoreCase(requestDto.getSortOrder()) ? ASC : DESC;
-//    final var pageableAndSortable = of(requestDto.getPageNumber(), pageSize, by(direction, requestDto.getSortColumn()));
-//    if (requestDto.isConcernsStatusClosed()) {
-//      return concernsRepository.findAllByConcernsStatusClosedIn(pageableAndSortable, requestDto.getSearchQuery(), "Closed");
-//    }
-//
-//    return null;
-//    //return doctorsRepository.findAll(pageableAndSortable, requestDTO.getSearchQuery());
-//  }
-
 }
