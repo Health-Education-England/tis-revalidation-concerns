@@ -14,5 +14,7 @@ import java.util.List;
 public class ConcernsSummaryDto {
 
   private long countTotal;
+  private long totalPages;
+  private long totalResults;
   private List<ConcernTraineeDto> concernTrainees;
 }
