@@ -114,7 +114,7 @@ jobs:
         with:
           task-definition: .aws/task-definition.json
           container-name: concerns
-          image: ${{ steps.login-ecr.outputs.registry }}/tis-revalidation-concerns:${{ github.sha }}
+          image: ${{ steps.login-ecr.outputs.registry }}/tis-hee-concerns:${{ github.sha }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
