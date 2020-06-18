@@ -113,7 +113,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: .aws/task-definition.json
-          container-name: tis-revalidation-concerns
+          container-name: concerns
           image: ${{ steps.login-ecr.outputs.registry }}/tis-revalidation-concerns:${{ github.sha }}
 
       - name: Deploy Amazon ECS task definition
