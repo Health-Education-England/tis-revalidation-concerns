@@ -44,6 +44,7 @@ public class RevalidationService {
     return UriComponentsBuilder.fromUriString(format("%s/%s", revalidationUrl, DOCTORS_URL))
         .queryParam("sortColumn", requestDto.getSortColumn())
         .queryParam("pageNumber", requestDto.getPageNumber())
+        .queryParam("searchQuery", requestDto.getSearchQuery())
         .queryParam("sortOrder", requestDto.getSortOrder());
   }
 }
