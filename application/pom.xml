@@ -68,6 +68,11 @@
       <artifactId>spring-boot-starter-test</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>

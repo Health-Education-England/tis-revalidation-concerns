@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ApiModel(description = "Detail trainee information for summary page")
+@ApiModel(description = "Detail trainee information for concern summary page")
 public class TraineeInfoDto {
 
     private String gmcReferenceNumber;

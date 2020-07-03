@@ -18,7 +18,6 @@ public class ConcernTraineeDto {
   private String doctorLastName;
   private String programme;
   private String concernsStatus;
-
   private LocalDate dateRaised;
   private String type;
   private String site;

@@ -1,0 +1,43 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILE:local}
+  application:
+    name: tis-revalidation-concerns
+  jackson:
+    serialization.write_dates_as_timestamps: false
+    serialization.indent_output: true
+  data:
+    mongodb:
+      uri: mongodb://${MONGODB_USERNAME:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:revalidation}?authSource=admin&authMechanism=SCRAM-SHA-1
+
+server:
+  servlet:
+    context-path: /concerns
+  port: ${SERVICE_PORT:8087}
+
+logging:
+  level:
+    uk.nhs.hee.tis.concerns: ${LOGGING_LEVEL:INFO}
+    org.springframework.data.mongodb.core.MongoTemplate: ${LOGGING_LEVEL:ERROR}
+    org.springframework.boot.autoconfigure: ${LOGGING_LEVEL:ERROR}
+  file:
+    name: ${LOG_DIR:${HOME}}/concerns.log
+
+management:
+  endpoints:
+    health:
+      enabled: true
+    web:
+      exposure:
+        include: '*'
+  server:
+    servlet:
+      context-path: /management
+
+app:
+  concern:
+    revalidation.url: ${REVALIDATION_URL:http://localhost:8080/revalidation/api}
+    pagination.pageSize: ${PAGINATION_PAGE_SIZE:20}
+  error:
+    exchange: "ex.error"
+    limit.retries: true

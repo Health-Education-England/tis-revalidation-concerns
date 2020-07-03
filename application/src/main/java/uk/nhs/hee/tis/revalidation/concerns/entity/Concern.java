@@ -1,6 +1,7 @@
 package uk.nhs.hee.tis.revalidation.concerns.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,22 +13,23 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "concernsForDB")
-public class ConcernsForDB {
+@Document(collection = "concerns")
+public class Concern {
   @Id
-  private String gmcReferenceNumber;
-  private String doctorFirstName;
-  private String doctorLastName;
-  private String programme;
-  private String concernsStatus;
-
-  private LocalDate dateRaised;
-  private String type;
-  private String site;
+  private String id;
+  private String gmcNumber;
+  private LocalDate dateOfIncident;
+  private String concernType;
   private String source;
+  private LocalDate dateReported;
+  private String employer;
+  private String site;
+  private String grade;
   private String status;
   private String admin;
   private LocalDate followUpDate;
+  private LocalDate lastUpdatedDate;
+  private List<String> comments;
   private LocalDate closedDate;
   private LocalDate dateAdded;
 

@@ -3,20 +3,24 @@ package uk.nhs.hee.tis.revalidation.concerns.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
 import uk.nhs.hee.tis.revalidation.concerns.service.ConcernsService;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/doctors")
+@RequestMapping("/api/concerns")
 public class ConcernsController {
 
   protected static final String SORT_COLUMN = "sortColumn";
@@ -51,5 +55,17 @@ public class ConcernsController {
         .build();
     final var concernSummary = concernsService.getConcernsSummary(concernsRequestDto);
     return ResponseEntity.ok().body(concernSummary);
+  }
+
+  @ApiOperation(value = "Get detailed concerns of a trainee", notes = "It will return trainee's concern details", response = DetailedConcernDto.class)
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Trainee concern details", response = DetailedConcernDto.class)})
+  @GetMapping("/{gmcId}")
+  public ResponseEntity<DetailedConcernDto> getDetailedConcerns(@PathVariable("gmcId") final String gmcId) {
+    log.info("Received request to fetch concerns for GmcId: {}", gmcId);
+    if (Objects.nonNull(gmcId)) {
+      final var detailedConcernDto = concernsService.getTraineeConcernsInfo(gmcId);
+      return ResponseEntity.ok().body(detailedConcernDto);
+    }
+    return new ResponseEntity<>(DetailedConcernDto.builder().build(), HttpStatus.OK);
   }
 }
