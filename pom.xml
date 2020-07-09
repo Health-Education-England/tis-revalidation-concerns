@@ -30,6 +30,14 @@
     <hamcrest.version>1.3</hamcrest.version>
     <springfox-swagger.version>2.9.2</springfox-swagger.version>
     <sentry.version>1.7.30</sentry.version>
+    <!-- Sonar cloud -->
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+    <sonar.organization>health-education-england</sonar.organization>
+    <sonar.projectKey>Health-Education-England_tis-revalidation-concerns</sonar.projectKey>
+    <sonar.moduleKey>${artifactId}</sonar.moduleKey>
+    <sonar.java.checkstyle.reportPaths>${project.build.directory}/checkstyle-result.xml
+    </sonar.java.checkstyle.reportPaths>
   </properties>
 
   <dependencyManagement>
@@ -128,5 +136,14 @@
     </dependencies>
 
   </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
