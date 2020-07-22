@@ -1,13 +1,13 @@
-name: Deploy
+name: CI/CD Workflow
 
 on:
   push:
-    branches:
-      - master
+  repository_dispatch:
+    types: [run_ci-cd]
 
 jobs:
-  build:
-    name: Build
+  assemble:
+    name: Assemble JAR
     runs-on: ubuntu-latest
 
     steps:
@@ -19,18 +19,62 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Build with Gradle
+        run: ./gradlew assemble
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: app-jar
-          path: ./application/target/*-uber.jar
+          path: build/libs/*.jar
+
+  check:
+    name: Perform checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Run Gradle checks
+        run: ./gradlew check -x test
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: reports
+          path: build/reports
+
+  test:
+    name: Run automated tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Run Gradle tests
+        run: ./gradlew test
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: reports
+          path: build/reports
 
   analyze:
     name: Perform quality analysis
-    needs: [build]
+    needs: [check, test]
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +84,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          name: app-jar
+          name: reports
           path: build/reports
 
       - name: Set up JDK 11
@@ -48,18 +92,15 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build with Maven
-        run: mvn clean install
-
       - name: Run quality analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar
+        run: ./gradlew sonarqube
 
   backup-artifacts:
     name: Backup build artifacts
-    needs: build
+    needs: [assemble, check, test]
     runs-on: ubuntu-latest
 
     steps:
@@ -82,8 +123,9 @@ jobs:
 
   dockerize:
     name: Dockerize
-    needs: build
+    needs: [assemble, test]
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - name: Checkout
@@ -158,12 +200,12 @@ jobs:
         uses: rtCamp/action-slack-notify@v2.0.0
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_TITLE: 'TIS-HEE-REVALIDATION has been deployed through the pipeline'
+          SLACK_TITLE: 'TIS-REVALIDATION-CONCERNS has been deployed through the pipeline'
 
       - name: Slack Notification failure
         if: failure()
         uses: rtCamp/action-slack-notify@v2.0.0
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_TITLE: "TIS-HEE-REVALIDATION build has failed in the pipeline"
+          SLACK_TITLE: "TIS-REVALIDATION-CONCERNS build has failed in the pipeline"
           SLACK_COLOR: "#fc1303"
