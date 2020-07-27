@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRecordDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
+import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
+import uk.nhs.hee.tis.revalidation.concerns.entity.Reference;
 import uk.nhs.hee.tis.revalidation.concerns.repository.ConcernsRepository;
 
 @Slf4j
@@ -59,17 +62,17 @@ public class ConcernsService {
     log.info("Fetching concerns info for GmcId: {}", gmcId);
     final var concerns = concernsRepository.findAllByGmcNumber(gmcId);
     final var allConcernsForTrainee = concerns.stream().map(concern -> {
-      return ConcernsRecordDto.builder()
+      return ConcernsDto.builder()
           .gmcNumber(gmcId)
           .concernId(concern.getId())
           .dateOfIncident(concern.getDateOfIncident())
-          .concernType(concern.getConcernType())
-          .source(concern.getSource())
+          .concernType(createReferenceDto(concern.getConcernType()))
+          .source(createReferenceDto(concern.getSource()))
           .dateReported(concern.getDateReported())
           .employer(concern.getEmployer())
-          .site(concern.getSite())
-          .grade(concern.getGrade())
-          .status(concern.getStatus())
+          .site(createReferenceDto(concern.getSite()))
+          .grade(createReferenceDto(concern.getGrade()))
+          .status(createReferenceDto(concern.getStatus()))
           .admin(concern.getAdmin())
           .followUpDate(concern.getFollowUpDate())
           .lastUpdatedDate(concern.getLastUpdatedDate())
@@ -81,5 +84,34 @@ public class ConcernsService {
         .concerns(allConcernsForTrainee);
     return detailedConcernDtoBuilder.build();
 
+  }
+
+  public Concern saveConcern(final ConcernsDto concern) {
+
+    final var traineeConcern = Concern.builder()
+        .gmcNumber(concern.getGmcNumber())
+        .dateOfIncident(concern.getDateOfIncident())
+        .concernType(createReferenceEntity(concern.getConcernType()))
+        .source(createReferenceEntity(concern.getSource()))
+        .dateReported(concern.getDateReported())
+        .employer(concern.getEmployer())
+        .site(createReferenceEntity(concern.getSite()))
+        .grade(createReferenceEntity(concern.getGrade()))
+        .status(createReferenceEntity(concern.getStatus()))
+        .admin(concern.getAdmin())
+        .followUpDate(concern.getFollowUpDate())
+        .lastUpdatedDate(concern.getLastUpdatedDate())
+        .build();
+
+    return concernsRepository.save(traineeConcern);
+
+  }
+
+  private Reference createReferenceEntity(final ReferenceDto referenceDto) {
+    return Reference.builder().id(referenceDto.getId()).label(referenceDto.getLabel()).build();
+  }
+
+  private ReferenceDto createReferenceDto(final Reference reference) {
+    return ReferenceDto.builder().id(reference.getId()).label(reference.getLabel()).build();
   }
 }

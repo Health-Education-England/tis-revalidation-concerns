@@ -10,9 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
@@ -73,5 +75,19 @@ public class ConcernsController {
       return ResponseEntity.ok().body(detailedConcernDto);
     }
     return new ResponseEntity<>(DetailedConcernDto.builder().build(), HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "Save new concern for a trainee", notes =
+      "It will save trainee concern record", response = String.class)
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "Trainee's new concern Id", response = String.class)})
+  @PostMapping
+  public ResponseEntity saveConcern(final ConcernsDto concerns) {
+    log.info("Received request to save concerns: {}", concerns);
+    if (Objects.nonNull(concerns)) {
+      final var concern = concernsService.saveConcern(concerns);
+      return ResponseEntity.ok(concern.getId());
+    }
+    return ResponseEntity.ok().build();
   }
 }

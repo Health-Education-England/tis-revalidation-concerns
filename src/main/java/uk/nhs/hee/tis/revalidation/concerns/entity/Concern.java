@@ -15,17 +15,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Document(collection = "concerns")
 public class Concern {
+
   @Id
   private String id;
   private String gmcNumber;
   private LocalDate dateOfIncident;
-  private String concernType;
-  private String source;
+  private Reference concernType;
+  private Reference source;
   private LocalDate dateReported;
   private String employer;
-  private String site;
-  private String grade;
-  private String status;
+  private Reference site;
+  private Reference grade;
+  private Reference status;
   private String admin;
   private LocalDate followUpDate;
   private LocalDate lastUpdatedDate;
