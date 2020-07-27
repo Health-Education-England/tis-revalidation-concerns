@@ -16,10 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.TraineeInfoDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.TraineeSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
+import uk.nhs.hee.tis.revalidation.concerns.entity.Reference;
 import uk.nhs.hee.tis.revalidation.concerns.exception.RevalidationException;
 import uk.nhs.hee.tis.revalidation.concerns.repository.ConcernsRepository;
 
@@ -49,12 +52,17 @@ public class ConcernsServiceTest {
 
   private LocalDate dateOfIncident;
   private String concernType;
+  private long concernTypeId;
   private String source;
+  private long sourceId;
   private LocalDate dateReported;
   private String employer;
   private String site;
+  private long siteId;
   private String grade;
+  private long gradeId;
   private String status;
+  private long statusId;
   private String admin;
   private LocalDate followUpDate;
   private LocalDate lastUpdatedDate;
@@ -130,25 +138,31 @@ public class ConcernsServiceTest {
 
   @Test
   public void shouldReturnAllConcernsForADoctor() throws Exception {
-    final var concern = prepareConcernRecord();
+    final var concern = prepareConcern();
     when(concernsRepository.findAllByGmcNumber(gmcRef1)).thenReturn(List.of(concern));
     var detailedConcernDto = concernsService.getTraineeConcernsInfo(gmcRef1);
     assertThat(detailedConcernDto.getConcerns().size(), is(1));
-    assertThat(detailedConcernDto.getConcerns().get(0).getConcernId(), is(concernId));
-    assertThat(detailedConcernDto.getConcerns().get(0).getGmcNumber(), is(gmcRef1));
-    assertThat(detailedConcernDto.getConcerns().get(0).getDateOfIncident(), is(dateOfIncident));
-    assertThat(detailedConcernDto.getConcerns().get(0).getConcernType(), is(concernType));
-    assertThat(detailedConcernDto.getConcerns().get(0).getSource(), is(source));
-    assertThat(detailedConcernDto.getConcerns().get(0).getDateReported(), is(dateReported));
-    assertThat(detailedConcernDto.getConcerns().get(0).getEmployer(), is(employer));
-    assertThat(detailedConcernDto.getConcerns().get(0).getSite(), is(site));
-    assertThat(detailedConcernDto.getConcerns().get(0).getGrade(), is(grade));
-    assertThat(detailedConcernDto.getConcerns().get(0).getStatus(), is(status));
-    assertThat(detailedConcernDto.getConcerns().get(0).getAdmin(), is(admin));
-    assertThat(detailedConcernDto.getConcerns().get(0).getFollowUpDate(), is(followUpDate));
-    assertThat(detailedConcernDto.getConcerns().get(0).getLastUpdatedDate(), is(lastUpdatedDate));
-    assertThat(detailedConcernDto.getConcerns().get(0).getComments().get(0), is("Test Comment 1"));
-    assertThat(detailedConcernDto.getConcerns().get(0).getComments().get(1), is("Test Comment 2"));
+    final var concernsDto = detailedConcernDto.getConcerns().get(0);
+    assertThat(concernsDto.getConcernId(), is(concernId));
+    assertThat(concernsDto.getGmcNumber(), is(gmcRef1));
+    assertThat(concernsDto.getDateOfIncident(), is(dateOfIncident));
+    assertThat(concernsDto.getConcernType().getLabel(), is(concernType));
+    assertThat(concernsDto.getConcernType().getId(), is(concernTypeId));
+    assertThat(concernsDto.getSource().getLabel(), is(source));
+    assertThat(concernsDto.getSource().getId(), is(sourceId));
+    assertThat(concernsDto.getDateReported(), is(dateReported));
+    assertThat(concernsDto.getEmployer(), is(employer));
+    assertThat(concernsDto.getSite().getLabel(), is(site));
+    assertThat(concernsDto.getSite().getId(), is(siteId));
+    assertThat(concernsDto.getGrade().getLabel(), is(grade));
+    assertThat(concernsDto.getGrade().getId(), is(gradeId));
+    assertThat(concernsDto.getStatus().getLabel(), is(status));
+    assertThat(concernsDto.getStatus().getId(), is(statusId));
+    assertThat(concernsDto.getAdmin(), is(admin));
+    assertThat(concernsDto.getFollowUpDate(), is(followUpDate));
+    assertThat(concernsDto.getLastUpdatedDate(), is(lastUpdatedDate));
+    assertThat(concernsDto.getComments().get(0), is("Test Comment 1"));
+    assertThat(concernsDto.getComments().get(1), is("Test Comment 2"));
   }
 
   @Test
@@ -158,18 +172,60 @@ public class ConcernsServiceTest {
     assertThat(detailedConcernDto.getConcerns().size(), is(0));
   }
 
-  private Concern prepareConcernRecord() {
+  @Test
+  public void shouldSaveConcern() {
+    final var concernRecord = prepareConcernRecordDto();
+    var concern = prepareConcern();
+    when(concernsService.saveConcern(concernRecord)).thenReturn(concern);
+    concern = concernsService.saveConcern(concernRecord);
+    assertThat(concern.getDateOfIncident(), is(dateOfIncident));
+    assertThat(concern.getConcernType().getLabel(), is(concernType));
+    assertThat(concern.getConcernType().getId(), is(concernTypeId));
+    assertThat(concern.getSource().getLabel(), is(source));
+    assertThat(concern.getSource().getId(), is(sourceId));
+    assertThat(concern.getDateReported(), is(dateReported));
+    assertThat(concern.getEmployer(), is(employer));
+    assertThat(concern.getSite().getLabel(), is(site));
+    assertThat(concern.getSite().getId(), is(siteId));
+    assertThat(concern.getGrade().getLabel(), is(grade));
+    assertThat(concern.getGrade().getId(), is(gradeId));
+    assertThat(concern.getStatus().getLabel(), is(status));
+    assertThat(concern.getStatus().getId(), is(statusId));
+    assertThat(concern.getAdmin(), is(admin));
+    assertThat(concern.getFollowUpDate(), is(followUpDate));
+    assertThat(concern.getLastUpdatedDate(), is(lastUpdatedDate));
+  }
+
+  private Concern prepareConcern() {
     return Concern.builder()
         .id(concernId)
         .gmcNumber(gmcRef1)
         .dateOfIncident(dateOfIncident)
-        .concernType(concernType)
-        .source(source)
+        .concernType(prepareReferenceEntity(concernTypeId, concernType))
+        .source(prepareReferenceEntity(sourceId, source))
         .dateReported(dateReported)
         .employer(employer)
-        .site(site)
-        .grade(grade)
-        .status(status)
+        .site(prepareReferenceEntity(siteId, site))
+        .grade(prepareReferenceEntity(gradeId, grade))
+        .status(prepareReferenceEntity(statusId, status))
+        .admin(admin)
+        .followUpDate(followUpDate)
+        .lastUpdatedDate(lastUpdatedDate)
+        .comments(comments)
+        .build();
+  }
+
+  private ConcernsDto prepareConcernRecordDto() {
+    return ConcernsDto.builder()
+        .gmcNumber(gmcRef1)
+        .dateOfIncident(dateOfIncident)
+        .concernType(prepareReferenceDto(concernTypeId, concernType))
+        .source(prepareReferenceDto(sourceId,source))
+        .dateReported(dateReported)
+        .employer(employer)
+        .site(prepareReferenceDto(siteId, site))
+        .grade(prepareReferenceDto(gradeId, grade))
+        .status(prepareReferenceDto(statusId, status))
         .admin(admin)
         .followUpDate(followUpDate)
         .lastUpdatedDate(lastUpdatedDate)
@@ -207,6 +263,14 @@ public class ConcernsServiceTest {
     return of(doctor1, doctor2);
   }
 
+  private Reference prepareReferenceEntity(final long id, final String label) {
+    return Reference.builder().id(id).label(label).build();
+  }
+
+  private ReferenceDto prepareReferenceDto(final long id, final String label) {
+    return ReferenceDto.builder().id(id).label(label).build();
+  }
+
   private void setupData() {
     gmcRef1 = faker.number().digits(8);
     gmcRef2 = faker.number().digits(8);
@@ -223,19 +287,22 @@ public class ConcernsServiceTest {
     concernId = faker.number().digits(6);
     dateOfIncident = now().minusDays(5);
     concernType = faker.lorem().characters(4);
+    concernTypeId = faker.number().randomNumber();
     source = faker.lorem().characters(4);
+    sourceId = faker.number().randomNumber();
     dateReported = now().minusDays(10);
-    ;
     employer = "Mile End Hospital Trust";
     site = "Mile End Hospital Trust";
+    siteId = faker.number().randomNumber();
     grade = "Academic Clinical Lecturer";
+    gradeId = faker.number().randomNumber();
     status = "Open";
+    statusId = faker.number().randomNumber();
     admin = "admin@admin.com";
     followUpDate = now().minusDays(7);
     lastUpdatedDate = now().minusDays(8);
     comments = of("Test Comment 1", "Test Comment 2");
     closedDate = now().minusDays(1);
     dateAdded = now().minusDays(2);
-
   }
 }

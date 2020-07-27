@@ -13,21 +13,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @ApiModel(description = "Current and legacy Concern information")
-public class ConcernsRecordDto {
+public class ConcernsDto {
 
   private String concernId;
   private String gmcNumber;
   private LocalDate dateOfIncident;
-  private String concernType;
-  private String source;
+  private ReferenceDto concernType;
+  private ReferenceDto source;
   private LocalDate dateReported;
   private String employer;
-  private String site;
-  private String grade;
-  private String status;
+  private ReferenceDto site;
+  private ReferenceDto grade;
+  private ReferenceDto status;
   private String admin;
   private LocalDate followUpDate;
   private LocalDate lastUpdatedDate;
   private List<String> comments;
-
 }

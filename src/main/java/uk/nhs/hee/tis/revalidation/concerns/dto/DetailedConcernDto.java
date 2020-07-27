@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 public class DetailedConcernDto {
 
   private String gmcNumber;
-  private List<ConcernsRecordDto> concerns;
+  private List<ConcernsDto> concerns;
 }
