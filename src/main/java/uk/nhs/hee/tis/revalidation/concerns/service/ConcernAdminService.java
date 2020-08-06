@@ -48,6 +48,11 @@ public class ConcernAdminService {
     this.mapper = mapper;
   }
 
+  /**
+   * Get a list of the admins that can be assigned to a concern.
+   *
+   * @return A list of admins.
+   */
   public List<ConcernAdminDto> getAssignableAdmins() {
     ListUsersInGroupRequest request = new ListUsersInGroupRequest();
     request.setGroupName(adminGroup);

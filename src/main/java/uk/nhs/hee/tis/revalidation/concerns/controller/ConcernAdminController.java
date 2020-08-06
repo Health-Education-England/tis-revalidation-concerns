@@ -42,7 +42,8 @@ public class ConcernAdminController {
   }
 
   @ApiOperation(value = "Get a list of concern admins")
-  @ApiResponse(code = 200, message = "Look up successful", response = ConcernAdminDto.class, responseContainer = "List")
+  @ApiResponse(code = 200, message = "Look up successful",
+      response = ConcernAdminDto.class, responseContainer = "List")
   @GetMapping
   public ResponseEntity<List<ConcernAdminDto>> getAssignableAdmins() {
     List<ConcernAdminDto> admins = service.getAssignableAdmins();
