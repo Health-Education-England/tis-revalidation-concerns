@@ -21,6 +21,8 @@
 
 package uk.nhs.hee.tis.revalidation.concerns;
 
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -36,5 +38,10 @@ public class ConcernsApplication {
   @Bean
   public RestTemplate restTemplate() {
     return new RestTemplate();
+  }
+
+  @Bean
+  public AWSCognitoIdentityProvider getAwsIdentityProvider() {
+    return AWSCognitoIdentityProviderClientBuilder.defaultClient();
   }
 }
