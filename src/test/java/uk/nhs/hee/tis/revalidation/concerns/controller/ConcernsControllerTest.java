@@ -59,6 +59,7 @@ import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
+import uk.nhs.hee.tis.revalidation.concerns.entity.ConcernStatus;
 import uk.nhs.hee.tis.revalidation.concerns.service.ConcernsService;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,8 +92,7 @@ public class ConcernsControllerTest {
   private long siteId1, siteId2;
   private String source1, source2;
   private long sourceId1, sourceId2;
-  private String status1, status2;
-  private long statusId1, statusId2;
+  private ConcernStatus status1, status2;
   private String admin1, admin2;
   private String comment;
   private String employer;
@@ -134,10 +134,8 @@ public class ConcernsControllerTest {
     source2 = faker.lorem().characters(5);
     sourceId1 = faker.number().randomNumber();
     sourceId2 = faker.number().randomNumber();
-    status1 = faker.lorem().characters(5);
-    status2 = faker.lorem().characters(5);
-    statusId1 = faker.number().randomNumber();
-    statusId2 = faker.number().randomNumber();
+    status1 = faker.options().option(ConcernStatus.class);
+    status2 = faker.options().option(ConcernStatus.class);
     admin1 = faker.lorem().characters(5);
     admin2 = faker.lorem().characters(5);
     employer = "Royal London Hospital Trust";
@@ -254,7 +252,7 @@ public class ConcernsControllerTest {
         .type(type1)
         .site(site1)
         .source(source1)
-        .status(status1)
+        .status(status1.name())
         .admin(admin1)
         .followUpDate(followUpDate1)
         .closedDate(closedDate1)
@@ -271,7 +269,7 @@ public class ConcernsControllerTest {
         .type(type2)
         .site(site2)
         .source(source2)
-        .status(status2)
+        .status(status2.name())
         .admin(admin2)
         .followUpDate(followUpDate2)
         .closedDate(closedDate2)
@@ -291,7 +289,7 @@ public class ConcernsControllerTest {
         .employer(employer)
         .site(prepareReferenceDto(siteId1, site1))
         .grade(prepareReferenceDto(gradeId, grade))
-        .status(prepareReferenceDto(statusId1, status1))
+        .status(status1.name())
         .admin(admin1)
         .followUpDate(followUpDate1)
         .lastUpdatedDate(lastUpdatedDate)
