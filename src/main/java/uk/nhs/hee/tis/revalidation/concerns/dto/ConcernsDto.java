@@ -45,7 +45,7 @@ public class ConcernsDto {
   private String employer;
   private ReferenceDto site;
   private ReferenceDto grade;
-  private ReferenceDto status;
+  private String status;
   private String admin;
   private LocalDate followUpDate;
   private LocalDate lastUpdatedDate;

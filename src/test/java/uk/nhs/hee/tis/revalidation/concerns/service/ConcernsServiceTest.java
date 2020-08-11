@@ -43,6 +43,7 @@ import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.TraineeInfoDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.TraineeSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
+import uk.nhs.hee.tis.revalidation.concerns.entity.ConcernStatus;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Reference;
 import uk.nhs.hee.tis.revalidation.concerns.exception.RevalidationException;
 import uk.nhs.hee.tis.revalidation.concerns.repository.ConcernsRepository;
@@ -82,8 +83,7 @@ public class ConcernsServiceTest {
   private long siteId;
   private String grade;
   private long gradeId;
-  private String status;
-  private long statusId;
+  private ConcernStatus status;
   private String admin;
   private LocalDate followUpDate;
   private LocalDate lastUpdatedDate;
@@ -177,8 +177,7 @@ public class ConcernsServiceTest {
     assertThat(concernsDto.getSite().getId(), is(siteId));
     assertThat(concernsDto.getGrade().getLabel(), is(grade));
     assertThat(concernsDto.getGrade().getId(), is(gradeId));
-    assertThat(concernsDto.getStatus().getLabel(), is(status));
-    assertThat(concernsDto.getStatus().getId(), is(statusId));
+    assertThat(concernsDto.getStatus(), is(status.name()));
     assertThat(concernsDto.getAdmin(), is(admin));
     assertThat(concernsDto.getFollowUpDate(), is(followUpDate));
     assertThat(concernsDto.getLastUpdatedDate(), is(lastUpdatedDate));
@@ -210,8 +209,7 @@ public class ConcernsServiceTest {
     assertThat(concern.getSite().getId(), is(siteId));
     assertThat(concern.getGrade().getLabel(), is(grade));
     assertThat(concern.getGrade().getId(), is(gradeId));
-    assertThat(concern.getStatus().getLabel(), is(status));
-    assertThat(concern.getStatus().getId(), is(statusId));
+    assertThat(concern.getStatus(), is(status));
     assertThat(concern.getAdmin(), is(admin));
     assertThat(concern.getFollowUpDate(), is(followUpDate));
     assertThat(concern.getLastUpdatedDate(), is(lastUpdatedDate));
@@ -228,7 +226,7 @@ public class ConcernsServiceTest {
         .employer(employer)
         .site(prepareReferenceEntity(siteId, site))
         .grade(prepareReferenceEntity(gradeId, grade))
-        .status(prepareReferenceEntity(statusId, status))
+        .status(status)
         .admin(admin)
         .followUpDate(followUpDate)
         .lastUpdatedDate(lastUpdatedDate)
@@ -246,7 +244,7 @@ public class ConcernsServiceTest {
         .employer(employer)
         .site(prepareReferenceDto(siteId, site))
         .grade(prepareReferenceDto(gradeId, grade))
-        .status(prepareReferenceDto(statusId, status))
+        .status(status.name())
         .admin(admin)
         .followUpDate(followUpDate)
         .lastUpdatedDate(lastUpdatedDate)
@@ -317,8 +315,7 @@ public class ConcernsServiceTest {
     siteId = faker.number().randomNumber();
     grade = "Academic Clinical Lecturer";
     gradeId = faker.number().randomNumber();
-    status = "Open";
-    statusId = faker.number().randomNumber();
+    status = faker.options().option(ConcernStatus.class);
     admin = "admin@admin.com";
     followUpDate = now().minusDays(7);
     lastUpdatedDate = now().minusDays(8);

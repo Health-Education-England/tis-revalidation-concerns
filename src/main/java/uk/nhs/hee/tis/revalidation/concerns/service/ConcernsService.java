@@ -35,6 +35,7 @@ import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
+import uk.nhs.hee.tis.revalidation.concerns.entity.ConcernStatus;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Reference;
 import uk.nhs.hee.tis.revalidation.concerns.repository.ConcernsRepository;
 
@@ -93,7 +94,7 @@ public class ConcernsService {
           .employer(concern.getEmployer())
           .site(createReferenceDto(concern.getSite()))
           .grade(createReferenceDto(concern.getGrade()))
-          .status(createReferenceDto(concern.getStatus()))
+          .status(concern.getStatus().name())
           .admin(concern.getAdmin())
           .followUpDate(concern.getFollowUpDate())
           .lastUpdatedDate(concern.getLastUpdatedDate())
@@ -118,7 +119,7 @@ public class ConcernsService {
         .employer(concern.getEmployer())
         .site(createReferenceEntity(concern.getSite()))
         .grade(createReferenceEntity(concern.getGrade()))
-        .status(createReferenceEntity(concern.getStatus()))
+        .status(ConcernStatus.valueOf(concern.getStatus()))
         .admin(concern.getAdmin())
         .followUpDate(concern.getFollowUpDate())
         .lastUpdatedDate(concern.getLastUpdatedDate())
