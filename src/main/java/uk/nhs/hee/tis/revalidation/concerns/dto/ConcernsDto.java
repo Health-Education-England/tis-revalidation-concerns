@@ -42,7 +42,7 @@ public class ConcernsDto {
   private ReferenceDto concernType;
   private ReferenceDto source;
   private LocalDate dateReported;
-  private String employer;
+  private ReferenceDto employer;
   private ReferenceDto site;
   private ReferenceDto grade;
   private String status;

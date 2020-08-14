@@ -79,6 +79,7 @@ public class ConcernsServiceTest {
   private long sourceId;
   private LocalDate dateReported;
   private String employer;
+  private long employerId;
   private String site;
   private long siteId;
   private String grade;
@@ -172,7 +173,8 @@ public class ConcernsServiceTest {
     assertThat(concernsDto.getSource().getLabel(), is(source));
     assertThat(concernsDto.getSource().getId(), is(sourceId));
     assertThat(concernsDto.getDateReported(), is(dateReported));
-    assertThat(concernsDto.getEmployer(), is(employer));
+    assertThat(concernsDto.getEmployer().getLabel(), is(employer));
+    assertThat(concernsDto.getEmployer().getId(), is(employerId));
     assertThat(concernsDto.getSite().getLabel(), is(site));
     assertThat(concernsDto.getSite().getId(), is(siteId));
     assertThat(concernsDto.getGrade().getLabel(), is(grade));
@@ -204,7 +206,8 @@ public class ConcernsServiceTest {
     assertThat(concern.getSource().getLabel(), is(source));
     assertThat(concern.getSource().getId(), is(sourceId));
     assertThat(concern.getDateReported(), is(dateReported));
-    assertThat(concern.getEmployer(), is(employer));
+    assertThat(concern.getEmployer().getLabel(), is(employer));
+    assertThat(concern.getEmployer().getId(), is(employerId));
     assertThat(concern.getSite().getLabel(), is(site));
     assertThat(concern.getSite().getId(), is(siteId));
     assertThat(concern.getGrade().getLabel(), is(grade));
@@ -223,7 +226,7 @@ public class ConcernsServiceTest {
         .concernType(prepareReferenceEntity(concernTypeId, concernType))
         .source(prepareReferenceEntity(sourceId, source))
         .dateReported(dateReported)
-        .employer(employer)
+        .employer(prepareReferenceEntity(employerId, employer))
         .site(prepareReferenceEntity(siteId, site))
         .grade(prepareReferenceEntity(gradeId, grade))
         .status(status)
@@ -241,7 +244,7 @@ public class ConcernsServiceTest {
         .concernType(prepareReferenceDto(concernTypeId, concernType))
         .source(prepareReferenceDto(sourceId,source))
         .dateReported(dateReported)
-        .employer(employer)
+        .employer(prepareReferenceDto(employerId, employer))
         .site(prepareReferenceDto(siteId, site))
         .grade(prepareReferenceDto(gradeId, grade))
         .status(status.name())
@@ -310,6 +313,7 @@ public class ConcernsServiceTest {
     source = faker.lorem().characters(4);
     sourceId = faker.number().randomNumber();
     dateReported = now().minusDays(10);
+    employerId = faker.number().randomNumber();
     employer = "Mile End Hospital Trust";
     site = "Mile End Hospital Trust";
     siteId = faker.number().randomNumber();
