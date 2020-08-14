@@ -44,7 +44,7 @@ public class Concern {
   private Reference concernType;
   private Reference source;
   private LocalDate dateReported;
-  private String employer;
+  private Reference employer;
   private Reference site;
   private Reference grade;
   private ConcernStatus status;

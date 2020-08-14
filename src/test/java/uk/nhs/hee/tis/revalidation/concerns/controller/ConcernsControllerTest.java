@@ -95,6 +95,7 @@ public class ConcernsControllerTest {
   private ConcernStatus status1, status2;
   private String admin1, admin2;
   private String comment;
+  private long employerId;
   private String employer;
   private String grade;
   private long gradeId;
@@ -138,6 +139,7 @@ public class ConcernsControllerTest {
     status2 = faker.options().option(ConcernStatus.class);
     admin1 = faker.lorem().characters(5);
     admin2 = faker.lorem().characters(5);
+    employerId = faker.number().randomNumber();
     employer = "Royal London Hospital Trust";
     comment = "This is a test comment";
     grade = "Academic Clinical Fellow";
@@ -227,7 +229,7 @@ public class ConcernsControllerTest {
   }
 
   private ConcernsSummaryDto prepareDoctorConcernsSummary() {
-    final var doctorsConcernsForDB = buildDoctorsConcernsForDBList();
+    final var doctorsConcernsForDB = buildTraineeConcernList();
     return ConcernsSummaryDto.builder()
         .concernTrainees(doctorsConcernsForDB)
         .countTotal(doctorsConcernsForDB.size())
@@ -241,7 +243,7 @@ public class ConcernsControllerTest {
         .build();
   }
 
-  private List<ConcernTraineeDto> buildDoctorsConcernsForDBList() {
+  private List<ConcernTraineeDto> buildTraineeConcernList() {
     final var concern1 = ConcernTraineeDto.builder()
         .gmcReferenceNumber(gmcRef1)
         .doctorFirstName(firstName1)
@@ -286,7 +288,7 @@ public class ConcernsControllerTest {
         .concernType(prepareReferenceDto(typeId1, type1))
         .source(prepareReferenceDto(sourceId1, source1))
         .dateReported(dateReported)
-        .employer(employer)
+        .employer(prepareReferenceDto(employerId, employer))
         .site(prepareReferenceDto(siteId1, site1))
         .grade(prepareReferenceDto(gradeId, grade))
         .status(status1.name())
