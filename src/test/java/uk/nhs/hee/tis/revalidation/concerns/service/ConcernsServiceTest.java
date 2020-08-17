@@ -162,9 +162,9 @@ public class ConcernsServiceTest {
   public void shouldReturnAllConcernsForADoctor() throws Exception {
     final var concern = prepareConcern();
     when(concernsRepository.findAllByGmcNumber(gmcRef1)).thenReturn(List.of(concern));
-    var detailedConcernDto = concernsService.getTraineeConcernsInfo(gmcRef1);
-    assertThat(detailedConcernDto.getConcerns().size(), is(1));
-    final var concernsDto = detailedConcernDto.getConcerns().get(0);
+    var concerns = concernsService.getTraineeConcernsInfo(gmcRef1);
+    assertThat(concerns.size(), is(1));
+    final var concernsDto = concerns.get(0);
     assertThat(concernsDto.getConcernId(), is(concernId));
     assertThat(concernsDto.getGmcNumber(), is(gmcRef1));
     assertThat(concernsDto.getDateOfIncident(), is(dateOfIncident));
@@ -190,8 +190,8 @@ public class ConcernsServiceTest {
   @Test
   public void shouldNotFailWhenThereIsNoConcernsForADoctorInTheService() throws Exception {
     when(concernsRepository.findAllByGmcNumber(gmcRef1)).thenReturn(List.of());
-    var detailedConcernDto = concernsService.getTraineeConcernsInfo(gmcRef1);
-    assertThat(detailedConcernDto.getConcerns().size(), is(0));
+    var concerns = concernsService.getTraineeConcernsInfo(gmcRef1);
+    assertThat(concerns.size(), is(0));
   }
 
   @Test
@@ -242,7 +242,7 @@ public class ConcernsServiceTest {
         .gmcNumber(gmcRef1)
         .dateOfIncident(dateOfIncident)
         .concernType(prepareReferenceDto(concernTypeId, concernType))
-        .source(prepareReferenceDto(sourceId,source))
+        .source(prepareReferenceDto(sourceId, source))
         .dateReported(dateReported)
         .employer(prepareReferenceDto(employerId, employer))
         .site(prepareReferenceDto(siteId, site))

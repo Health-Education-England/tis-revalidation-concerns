@@ -24,6 +24,7 @@ package uk.nhs.hee.tis.revalidation.concerns.service;
 import static java.time.LocalDate.now;
 import static java.util.stream.Collectors.toList;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,6 @@ import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
 import uk.nhs.hee.tis.revalidation.concerns.entity.ConcernStatus;
@@ -80,7 +80,7 @@ public class ConcernsService {
         .build();
   }
 
-  public DetailedConcernDto getTraineeConcernsInfo(final String gmcId) {
+  public List<ConcernsDto> getTraineeConcernsInfo(final String gmcId) {
     log.info("Fetching concerns info for GmcId: {}", gmcId);
     final var concerns = concernsRepository.findAllByGmcNumber(gmcId);
     final var allConcernsForTrainee = concerns.stream().map(concern -> {
@@ -102,10 +102,8 @@ public class ConcernsService {
           .build();
     }).collect(toList());
 
-    final var detailedConcernDtoBuilder = DetailedConcernDto.builder()
-        .concerns(allConcernsForTrainee);
-    return detailedConcernDtoBuilder.build();
 
+    return allConcernsForTrainee;
   }
 
   public Concern saveConcern(final ConcernsDto concern) {
