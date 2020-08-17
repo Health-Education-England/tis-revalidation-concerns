@@ -21,6 +21,7 @@
 
 package uk.nhs.hee.tis.revalidation.concerns.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,6 +34,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(description = "Current and legacy Concern information")
 public class ConcernsDto {
 
