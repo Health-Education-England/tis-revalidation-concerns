@@ -51,6 +51,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
@@ -219,13 +220,28 @@ public class ConcernsControllerTest {
   @Test
   public void shouldSaveConcern() throws Exception {
 
-    final var concernsDto = ConcernsDto.builder().build();
+    final var concernsDto = ConcernsDto.builder()
+        .gmcNumber("110000")
+        .dateOfIncident(now())
+        .concernType(ReferenceDto.builder().id(1).label("concernType").build())
+        .source(ReferenceDto.builder().id(1).label("source").build())
+        .employer(ReferenceDto.builder().id(1).label("employer").build())
+        .site(ReferenceDto.builder().id(1).label("site").build())
+        .grade(ReferenceDto.builder().id(1).label("grade").build())
+        .dateReported(now())
+        .status(ConcernStatus.OPEN.name())
+        .admin("adfad")
+        .followUpDate(now().plusDays(10))
+        .lastUpdatedDate(now())
+        .comments(List.of())
+        .build();
     when(concernsService.saveConcern(concernsDto)).thenReturn(concern);
     when(concern.getId()).thenReturn(concernId);
     this.mockMvc.perform(post("/api/concerns")
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
         .content(mapper.writeValueAsBytes(concernsDto)))
-        .andExpect(status().isOk())
-        .andExpect(content().string(concernId));
+        .andExpect(status().isOk());
   }
 
   private ConcernsSummaryDto prepareDoctorConcernsSummary() {

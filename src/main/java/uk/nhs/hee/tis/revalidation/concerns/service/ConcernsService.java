@@ -109,7 +109,7 @@ public class ConcernsService {
   }
 
   public Concern saveConcern(final ConcernsDto concern) {
-
+    log.info("Receive request to save concerns: {}", concern);
     final var traineeConcern = Concern.builder()
         .gmcNumber(concern.getGmcNumber())
         .dateOfIncident(concern.getDateOfIncident())
