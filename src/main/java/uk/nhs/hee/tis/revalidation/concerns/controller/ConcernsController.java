@@ -21,13 +21,15 @@
 
 package uk.nhs.hee.tis.revalidation.concerns.controller;
 
+import static java.util.List.of;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +41,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
 import uk.nhs.hee.tis.revalidation.concerns.service.ConcernsService;
 
 @Slf4j
@@ -85,18 +86,18 @@ public class ConcernsController {
   }
 
   @ApiOperation(value = "Get detailed concerns of a trainee", notes =
-      "It will return trainee's concern details", response = DetailedConcernDto.class)
+      "It will return trainee's concern details", response = List.class)
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Trainee concern details", response = DetailedConcernDto.class)})
+      @ApiResponse(code = 200, message = "Trainee concern details", response = List.class)})
   @GetMapping("/{gmcId}")
-  public ResponseEntity<DetailedConcernDto> getDetailedConcerns(
+  public ResponseEntity<List<ConcernsDto>> getDetailedConcerns(
       @PathVariable("gmcId") final String gmcId) {
     log.info("Received request to fetch concerns for GmcId: {}", gmcId);
     if (Objects.nonNull(gmcId)) {
-      final var detailedConcernDto = concernsService.getTraineeConcernsInfo(gmcId);
-      return ResponseEntity.ok().body(detailedConcernDto);
+      final var concerns = concernsService.getTraineeConcernsInfo(gmcId);
+      return ResponseEntity.ok().body(concerns);
     }
-    return new ResponseEntity<>(DetailedConcernDto.builder().build(), HttpStatus.OK);
+    return ResponseEntity.ok().body(of());
   }
 
   @ApiOperation(value = "Save new concern for a trainee", notes =

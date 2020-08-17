@@ -57,7 +57,6 @@ import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.DetailedConcernDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
 import uk.nhs.hee.tis.revalidation.concerns.entity.ConcernStatus;
@@ -196,7 +195,7 @@ public class ConcernsControllerTest {
 
   @Test
   public void shouldReturnAllConcernsForADoctor() throws Exception {
-    final var detailedConcernDto = prepareDetailedConcernDto();
+    final var detailedConcernDto = List.of(prepareConcernsRecordDto());
     when(concernsService.getTraineeConcernsInfo(gmcRef1)).thenReturn(detailedConcernDto);
     this.mockMvc.perform(get("/api/concerns/{gmcId}", gmcRef1))
         .andExpect(status().isOk())
@@ -206,10 +205,7 @@ public class ConcernsControllerTest {
 
   @Test
   public void shouldNotFailWhenThereIsNoConcernsForADoctor() throws Exception {
-    final var detailedConcernDto = DetailedConcernDto.builder()
-        .gmcNumber(gmcRef1)
-        .concerns(List.of())
-        .build();
+    final var detailedConcernDto = List.of(prepareConcernsRecordDto());
     when(concernsService.getTraineeConcernsInfo(gmcRef1)).thenReturn(detailedConcernDto);
     this.mockMvc.perform(get("/api/concerns/{gmcId}", gmcRef1))
         .andExpect(status().isOk())
@@ -249,13 +245,6 @@ public class ConcernsControllerTest {
     return ConcernsSummaryDto.builder()
         .concernTrainees(doctorsConcernsForDB)
         .countTotal(doctorsConcernsForDB.size())
-        .build();
-  }
-
-  private DetailedConcernDto prepareDetailedConcernDto() {
-    return DetailedConcernDto.builder()
-        .gmcNumber(gmcRef1)
-        .concerns(List.of(prepareConcernsRecordDto()))
         .build();
   }
 
