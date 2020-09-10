@@ -26,6 +26,8 @@ import static org.springframework.http.HttpEntity.EMPTY;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +68,11 @@ public class RevalidationService {
         .queryParam("sortColumn", requestDto.getSortColumn())
         .queryParam("sortOrder", requestDto.getSortOrder())
         .queryParam("searchQuery", requestDto.getSearchQuery())
-        .queryParam("pageNumber", requestDto.getPageNumber());
+        .queryParam("pageNumber", requestDto.getPageNumber())
+        .queryParam("dbcs", getDbcs(requestDto.getDbcs()));
+  }
+
+  private String getDbcs(final List<String> dbcs) {
+    return dbcs.stream().collect(Collectors.joining(","));
   }
 }
