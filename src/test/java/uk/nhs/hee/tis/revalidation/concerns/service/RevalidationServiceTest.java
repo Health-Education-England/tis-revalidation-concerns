@@ -34,6 +34,7 @@ import com.github.javafaker.Faker;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -67,6 +68,8 @@ class RevalidationServiceTest {
   private String sortOrder;
   private String searchQuery;
   private int pageNumber;
+  private String designatedBody1, designatedBody2;
+  private List<String> dbcs;
 
 
   @BeforeEach
@@ -76,6 +79,9 @@ class RevalidationServiceTest {
     sortColumn = faker.lorem().characters(6);
     sortOrder = faker.lorem().characters(3);
     searchQuery = faker.lorem().characters(8);
+    designatedBody1 = faker.lorem().characters(8);
+    designatedBody2 = faker.lorem().characters(8);
+    dbcs = List.of(designatedBody1, designatedBody2);
     pageNumber = faker.number().randomDigit();
     ReflectionTestUtils.setField(revalidationService, "revalidationUrl", revalidationUrl);
   }
@@ -85,10 +91,12 @@ class RevalidationServiceTest {
     when(concernsRequestDto.getSortColumn()).thenReturn(sortColumn);
     when(concernsRequestDto.getSortOrder()).thenReturn(sortOrder);
     when(concernsRequestDto.getSearchQuery()).thenReturn(searchQuery);
+    when(concernsRequestDto.getDbcs()).thenReturn(dbcs);
     when(concernsRequestDto.getPageNumber()).thenReturn(pageNumber);
+    final var dbcString = String.format("%s,%s", designatedBody1, designatedBody2);
     final var url = String
-        .format("%s/%s?sortColumn=%s&sortOrder=%s&searchQuery=%s&pageNumber=%d", revalidationUrl,
-            DOCTORS_URL, sortColumn, sortOrder, searchQuery, pageNumber);
+        .format("%s/%s?sortColumn=%s&sortOrder=%s&searchQuery=%s&pageNumber=%d&dbcs=%s", revalidationUrl,
+            DOCTORS_URL, sortColumn, sortOrder, searchQuery, pageNumber, dbcString);
     final ResponseEntity<TraineeSummaryDto> response = ResponseEntity.ok(buildTraineeSummaryDto());
     when(restTemplate.exchange(url, GET, EMPTY, TraineeSummaryDto.class))
         .thenReturn(response);
@@ -107,10 +115,12 @@ class RevalidationServiceTest {
     when(concernsRequestDto.getSortColumn()).thenReturn(sortColumn);
     when(concernsRequestDto.getSortOrder()).thenReturn(sortOrder);
     when(concernsRequestDto.getSearchQuery()).thenReturn(searchQuery);
+    when(concernsRequestDto.getDbcs()).thenReturn(dbcs);
     when(concernsRequestDto.getPageNumber()).thenReturn(pageNumber);
+    final var dbcString = String.format("%s,%s", designatedBody1, designatedBody2);
     final var url = String
-        .format("%s/%s?sortColumn=%s&sortOrder=%s&searchQuery=%s&pageNumber=%d", revalidationUrl,
-            DOCTORS_URL, sortColumn, sortOrder, searchQuery, pageNumber);
+        .format("%s/%s?sortColumn=%s&sortOrder=%s&searchQuery=%s&pageNumber=%d&dbcs=%s", revalidationUrl,
+            DOCTORS_URL, sortColumn, sortOrder, searchQuery, pageNumber, dbcString);
     final ResponseEntity<TraineeSummaryDto> response = ResponseEntity.notFound().build();
     when(restTemplate.exchange(url, GET, EMPTY, TraineeSummaryDto.class))
         .thenReturn(response);
