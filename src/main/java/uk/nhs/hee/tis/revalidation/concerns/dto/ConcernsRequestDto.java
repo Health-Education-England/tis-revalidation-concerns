@@ -21,6 +21,7 @@
 
 package uk.nhs.hee.tis.revalidation.concerns.dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -33,4 +34,5 @@ public class ConcernsRequestDto {
   private boolean concernsStatusClosed;
   private int pageNumber;
   private String searchQuery;
+  private List<String> dbcs;
 }

@@ -66,6 +66,7 @@ public class RevalidationService {
         .queryParam("sortColumn", requestDto.getSortColumn())
         .queryParam("sortOrder", requestDto.getSortOrder())
         .queryParam("searchQuery", requestDto.getSearchQuery())
-        .queryParam("pageNumber", requestDto.getPageNumber());
+        .queryParam("pageNumber", requestDto.getPageNumber())
+        .queryParam("dbcs", requestDto.getDbcs());
   }
 }

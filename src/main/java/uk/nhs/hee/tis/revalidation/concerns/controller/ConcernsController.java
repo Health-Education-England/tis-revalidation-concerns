@@ -59,6 +59,7 @@ public class ConcernsController {
   protected static final String PAGE_NUMBER_VALUE = "0";
   protected static final String SEARCH_QUERY = "searchQuery";
   protected static final String EMPTY_STRING = "";
+  protected static final String DESIGNATED_BODY_CODES = "dbcs";
 
   @Autowired
   private ConcernsService concernsService;
@@ -73,12 +74,14 @@ public class ConcernsController {
       @RequestParam(name = SORT_ORDER, defaultValue = DESC, required = false) final String sortOrder,
       @RequestParam(name = CONCERNS_STATUS_CLOSED, defaultValue = CONCERNS_STATUS_CLOSED_VALUE, required = false) final boolean concernsStatusClosed,
       @RequestParam(name = PAGE_NUMBER, defaultValue = PAGE_NUMBER_VALUE, required = false) final int pageNumber,
+      @RequestParam(name = DESIGNATED_BODY_CODES, required = false) final List<String> dbcs,
       @RequestParam(name = SEARCH_QUERY, defaultValue = EMPTY_STRING, required = false) final String searchQuery) {
 
     final var concernsRequestDto = ConcernsRequestDto.builder()
         .sortColumn(sortColumn)
         .sortOrder(sortOrder)
         .pageNumber(pageNumber)
+        .dbcs(dbcs)
         .searchQuery(searchQuery)
         .build();
     final var concernSummary = concernsService.getConcernsSummary(concernsRequestDto);
