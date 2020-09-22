@@ -22,15 +22,19 @@
 package uk.nhs.hee.tis.revalidation.concerns.service;
 
 import static java.time.LocalDate.now;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRecordDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
@@ -80,6 +84,10 @@ public class ConcernsService {
         .build();
   }
 
+  public Map<String, ConcernsRecordDto> getTraineesLatestConcernsInfo(final List<String> gmcIds) {
+    return gmcIds.stream().collect(toMap(identity(), this::prepareConcernData));
+  }
+
   public List<ConcernsDto> getTraineeConcernsInfo(final String gmcId) {
     log.info("Fetching concerns info for GmcId: {}", gmcId);
     final var concerns = concernsRepository.findAllByGmcNumber(gmcId);
@@ -101,7 +109,6 @@ public class ConcernsService {
           .comments(concern.getComments())
           .build();
     }).collect(toList());
-
 
     return allConcernsForTrainee;
   }
@@ -133,5 +140,22 @@ public class ConcernsService {
 
   private ReferenceDto createReferenceDto(final Reference reference) {
     return ReferenceDto.builder().id(reference.getId()).label(reference.getLabel()).build();
+  }
+
+  private ConcernsRecordDto prepareConcernData(final String gmcId) {
+    final var concernList = concernsRepository.findAllByGmcNumberOrderByDateReportedDesc(gmcId);
+    if (!concernList.isEmpty()) {
+      final var concern = concernList.get(0);
+      return ConcernsRecordDto.builder()
+          .followUpDate(concern.getFollowUpDate())
+          .site(concern.getSite().getLabel())
+          .closedDate(concern.getClosedDate())
+          .dateRaised(concern.getDateReported())
+          .type(concern.getConcernType().getLabel())
+          .concernsStatus(concern.getStatus().name())
+          .source(concern.getSource().getLabel())
+          .build();
+    }
+    return new ConcernsRecordDto();
   }
 }
