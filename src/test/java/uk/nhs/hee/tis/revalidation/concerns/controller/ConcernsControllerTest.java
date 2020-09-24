@@ -29,20 +29,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.ASC;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.DATE_RAISED;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.DESC;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.EMPTY_STRING;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.PAGE_NUMBER;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.PAGE_NUMBER_VALUE;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.SEARCH_QUERY;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.SORT_COLUMN;
-import static uk.nhs.hee.tis.revalidation.concerns.controller.ConcernsController.SORT_ORDER;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +47,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernTraineeDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRecordDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ReferenceDto;
 import uk.nhs.hee.tis.revalidation.concerns.entity.Concern;
@@ -154,48 +146,20 @@ public class ConcernsControllerTest {
   }
 
   @Test
-  public void shouldReturnTraineeConcernsInformation() throws Exception {
-    final var doctorConcernsSummaryDto = prepareDoctorConcernsSummary();
-    final var requestDto = ConcernsRequestDto.builder().sortOrder(ASC).sortColumn(DATE_RAISED)
-        .searchQuery(EMPTY_STRING).build();
-    when(concernsService.getConcernsSummary(requestDto)).thenReturn(doctorConcernsSummaryDto);
-    this.mockMvc.perform(get("/api/concerns")
-        .param(SORT_ORDER, ASC)
-        .param(SORT_COLUMN, DATE_RAISED)
-        .param(PAGE_NUMBER, PAGE_NUMBER_VALUE)
-        .param(SEARCH_QUERY, EMPTY_STRING))
-        .andExpect(status().isOk())
-        .andExpect(content().json(mapper.writeValueAsString(doctorConcernsSummaryDto)));
-
-  }
-
-  @Test
-  public void shouldReturnDataWhenEndpointIsCalledWithoutParameters() throws Exception {
-    final var doctorConcernsSummaryDto = prepareDoctorConcernsSummary();
-    final var requestDTO = ConcernsRequestDto.builder().sortOrder(DESC).sortColumn(DATE_RAISED)
-        .searchQuery(EMPTY_STRING).build();
-    when(concernsService.getConcernsSummary(requestDTO)).thenReturn(doctorConcernsSummaryDto);
-    this.mockMvc.perform(get("/api/concerns"))
+  public void shouldReturnSummaryOfConcern() throws Exception {
+    final Map<String, ConcernsRecordDto> detailedConcernDto = Map
+        .of(gmcRef1, prepareConcernsRecordDto());
+    when(concernsService.getTraineesLatestConcernsInfo(List.of(gmcRef1)))
+        .thenReturn(detailedConcernDto);
+    this.mockMvc.perform(get("/api/concerns/summary/{gmcId}", gmcRef1))
         .andExpect(status().isOk())
         .andDo(print())
-        .andExpect(content().json(mapper.writeValueAsString(doctorConcernsSummaryDto)));
-  }
-
-  @Test
-  public void shouldNotFailAppWhenResponseIsEmpty() throws Exception {
-    final ConcernsSummaryDto doctorConcernsSummaryDto = new ConcernsSummaryDto();
-    final var requestDTO = ConcernsRequestDto.builder().sortOrder(DESC).sortColumn(DATE_RAISED)
-        .searchQuery(EMPTY_STRING).build();
-    when(concernsService.getConcernsSummary(requestDTO)).thenReturn(doctorConcernsSummaryDto);
-    this.mockMvc.perform(get("/api/concerns"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andExpect(content().json(mapper.writeValueAsString(doctorConcernsSummaryDto)));
+        .andExpect(content().json(mapper.writeValueAsString(detailedConcernDto)));
   }
 
   @Test
   public void shouldReturnAllConcernsForADoctor() throws Exception {
-    final var detailedConcernDto = List.of(prepareConcernsRecordDto());
+    final var detailedConcernDto = List.of(prepareConcernsDto());
     when(concernsService.getTraineeConcernsInfo(gmcRef1)).thenReturn(detailedConcernDto);
     this.mockMvc.perform(get("/api/concerns/{gmcId}", gmcRef1))
         .andExpect(status().isOk())
@@ -205,7 +169,7 @@ public class ConcernsControllerTest {
 
   @Test
   public void shouldNotFailWhenThereIsNoConcernsForADoctor() throws Exception {
-    final var detailedConcernDto = List.of(prepareConcernsRecordDto());
+    final var detailedConcernDto = List.of(prepareConcernsDto());
     when(concernsService.getTraineeConcernsInfo(gmcRef1)).thenReturn(detailedConcernDto);
     this.mockMvc.perform(get("/api/concerns/{gmcId}", gmcRef1))
         .andExpect(status().isOk())
@@ -285,7 +249,7 @@ public class ConcernsControllerTest {
     return of(concern1, concern2);
   }
 
-  private ConcernsDto prepareConcernsRecordDto() {
+  private ConcernsDto prepareConcernsDto() {
     return ConcernsDto.builder()
         .concernId(concernId)
         .gmcNumber(gmcRef1)
@@ -301,6 +265,16 @@ public class ConcernsControllerTest {
         .followUpDate(followUpDate1)
         .lastUpdatedDate(lastUpdatedDate)
         .comments(List.of(comment))
+        .build();
+  }
+
+  private ConcernsRecordDto prepareConcernsRecordDto() {
+    return ConcernsRecordDto.builder()
+        .type(type1)
+        .source(source1)
+        .site(site1)
+        .concernsStatus(status1.name())
+        .followUpDate(followUpDate1)
         .build();
   }
 

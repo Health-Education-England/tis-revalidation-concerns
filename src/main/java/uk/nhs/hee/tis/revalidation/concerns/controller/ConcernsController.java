@@ -22,11 +22,13 @@
 package uk.nhs.hee.tis.revalidation.concerns.controller;
 
 import static java.util.List.of;
+import static org.springframework.http.HttpStatus.OK;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +38,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRequestDto;
-import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsSummaryDto;
+import uk.nhs.hee.tis.revalidation.concerns.dto.ConcernsRecordDto;
 import uk.nhs.hee.tis.revalidation.concerns.service.ConcernsService;
 
 @Slf4j
@@ -64,30 +64,6 @@ public class ConcernsController {
   @Autowired
   private ConcernsService concernsService;
 
-  @ApiOperation(value = "All trainee doctors information", notes =
-      "It will return all the information about trainee doctors", response = ConcernsSummaryDto.class)
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Trainee gmc all doctors data", response = ConcernsSummaryDto.class)})
-  @GetMapping
-  public ResponseEntity<ConcernsSummaryDto> getConcernsInfo(
-      @RequestParam(name = SORT_COLUMN, defaultValue = DATE_RAISED, required = false) final String sortColumn,
-      @RequestParam(name = SORT_ORDER, defaultValue = DESC, required = false) final String sortOrder,
-      @RequestParam(name = CONCERNS_STATUS_CLOSED, defaultValue = CONCERNS_STATUS_CLOSED_VALUE, required = false) final boolean concernsStatusClosed,
-      @RequestParam(name = PAGE_NUMBER, defaultValue = PAGE_NUMBER_VALUE, required = false) final int pageNumber,
-      @RequestParam(name = DESIGNATED_BODY_CODES, required = false) final List<String> dbcs,
-      @RequestParam(name = SEARCH_QUERY, defaultValue = EMPTY_STRING, required = false) final String searchQuery) {
-
-    final var concernsRequestDto = ConcernsRequestDto.builder()
-        .sortColumn(sortColumn)
-        .sortOrder(sortOrder)
-        .pageNumber(pageNumber)
-        .dbcs(dbcs)
-        .searchQuery(searchQuery)
-        .build();
-    final var concernSummary = concernsService.getConcernsSummary(concernsRequestDto);
-    return ResponseEntity.ok().body(concernSummary);
-  }
-
   @ApiOperation(value = "Get detailed concerns of a trainee", notes =
       "It will return trainee's concern details", response = List.class)
   @ApiResponses(value = {
@@ -101,6 +77,18 @@ public class ConcernsController {
       return ResponseEntity.ok().body(concerns);
     }
     return ResponseEntity.ok().body(of());
+  }
+
+  @ApiOperation(value = "Get latest concerns info of a list of trainee", notes =
+      "It will return trainees' latest concern info", response = Map.class)
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "Trainees' latest concern info", response = Map.class)})
+  @GetMapping("/summary/{gmcIds}")
+  public ResponseEntity<Map<String, ConcernsRecordDto>> getConcernsSummary(
+      @PathVariable("gmcIds") final List<String> gmcIds) {
+    log.info("Received request to fetch concerns for GmcIds: {}", gmcIds);
+    final var concerns = concernsService.getTraineesLatestConcernsInfo(gmcIds);
+    return new ResponseEntity<Map<String, ConcernsRecordDto>>(concerns, OK);
   }
 
   @ApiOperation(value = "Save new concern for a trainee", notes =
