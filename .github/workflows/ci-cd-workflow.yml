@@ -155,7 +155,7 @@ jobs:
         run: |
           ./gradlew bootBuildImage -x bootJar --imageName=$ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY
 
   deploy:
     name: Deploy
@@ -194,13 +194,12 @@ jobs:
           wait-for-service-stability: true
 
       - name: Push stable tag to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ github.event.repository.name }}
-        run: |
-          ./gradlew bootBuildImage -x bootJar --imageName=$ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY:stable
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:stable
+        uses: tinact/docker.image-retag@master
+        with:
+          image_name: ${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}:${{ github.sha }}
+          image_old_tag: latest
+          image_new_tag: stable
+          registry: ${{ steps.login-ecr.outputs.registry }}
 
       - name: Slack Notification success
         if: success()
