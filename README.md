@@ -30,6 +30,3 @@ This project uses [Semantic Versioning](semver.org).
 
 ## License
 This project is license under [The MIT License (MIT)](LICENSE).
-
-[task-definition]: .aws/task-definition.json
-[Application]: src/main/java/uk/nhs/hee/tis/revalidation/concerns/ConcernsApplication.java
