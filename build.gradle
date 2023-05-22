@@ -37,8 +37,8 @@ dependencies {
   annotationProcessor "org.projectlombok:lombok"
 
   // MapStruct
-  implementation "org.mapstruct:mapstruct:1.5.1.Final"
-  annotationProcessor "org.mapstruct:mapstruct-processor:1.5.1.Final"
+  implementation "org.mapstruct:mapstruct:1.5.5.Final"
+  annotationProcessor "org.mapstruct:mapstruct-processor:1.5.5.Final"
   testAnnotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 
   // Sentry reporting
