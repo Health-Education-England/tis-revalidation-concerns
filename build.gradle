@@ -13,6 +13,9 @@ group = "uk.nhs.hee.tis.revalidation"
 version = "0.0.1"
 sourceCompatibility = "11"
 
+// Lombok 1.18.30+ is needed to compile on JDK 21, which the Sonar analysis step uses.
+ext["lombok.version"] = "1.18.48"
+
 configurations {
   compileOnly {
     extendsFrom annotationProcessor
